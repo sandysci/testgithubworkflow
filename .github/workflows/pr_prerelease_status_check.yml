@@ -12,29 +12,17 @@ on:
   # Allows one to manually run workflow from UI
   workflow_dispatch:
 jobs:
-  prerelease_status_check:
+  job1:
     runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
-      - uses: actions/checkout@v2
-
-      - run: git fetch --all --tags
-
-      - name: Check Release Version
-        uses: catan-settlement-engine
-        with:
-          file: catan-settlement-engine\package.json
-          tagFormat: -alpha
-        id: version_check_staging
-      - name:
-        run: echo "Version ${{steps.version_check.outputs.releaseVersion}}"
-      - id: set_var
-        run: |
-          content=`cat catan-settlement-engine/package.json`
-          # the following lines are only required for multi line json
-          content="${content//'%'/'%25'}"
-          content="${content//$'\n'/'%0A'}"
-          content="${content//$'\r'/'%0D'}"
-          # end of optional handling for multi line json
-          echo "::set-output name=packageJson::$content"
-      - run: |
-          echo "${{fromJson(steps.set_var.outputs.packageJson)}}"
+      - id: set-matrix
+        run: echo "::set-output name=matrix::{\"include\":[{\"project\":\"foo\",\"config\":\"Debug\"},{\"project\":\"bar\",\"config\":\"Release\"}]}"
+  job2:
+    needs: job1
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: ${{fromJSON(needs.job1.outputs.matrix)}}
+    steps:
+      - run: build
