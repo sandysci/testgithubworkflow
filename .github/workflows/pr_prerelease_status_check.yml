@@ -55,8 +55,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Generate Dynamic Environment Variable
-          run: echo "NODE_VERSION=$(cat package.json)" >> $GITHUB_ENV
-          - name: Print NODE_VERSION
-            run: |
-              echo ${{ env.NODE_VERSION }}
-              echo $NODE_VERSION
+        run: echo "NODE_VERSION=$(cat package.json)" >> $GITHUB_ENV
+      - name: Print NODE_VERSION
+        run: |
+          echo ${{ env.NODE_VERSION }}
+          echo $NODE_VERSION
