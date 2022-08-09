@@ -84,11 +84,12 @@ jobs:
           echo "${{fromJson(steps.set_var.outputs.matrix)}}"
       - name: Terminate
       - run: echo ...
+
   readFile:
     runs-on: ubuntu-latest
     steps:
-      - name: fetch the package json value
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v2
+      - name: fetch Package json File
         run: |
           githubjson=`cat package.json`
           echo $githubjson
