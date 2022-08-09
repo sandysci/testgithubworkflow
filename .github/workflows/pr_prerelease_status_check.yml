@@ -62,7 +62,6 @@ jobs:
           echo ${{ env.NODE_VERSION }}
           echo $NODE_VERSION
   testJob:
-    name: Test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
