@@ -64,7 +64,7 @@ jobs:
           echo "::set-output name=packageJson::${content//'%'/'%25'}"
       - name: Print Package Json
         run: |
-          echo "${{fromJson(steps.set_var.outputs.packageJson)}}"
+          echo "${{fromJson(steps.set_var.outputs.packageJson).version}}"
   job3:
     runs-on: ubuntu-latest
     outputs:
