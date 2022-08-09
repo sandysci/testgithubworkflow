@@ -62,9 +62,6 @@ jobs:
           # content="${content//$'\r'/'%0D'}"
           # end of optional handling for multi line json
           echo "::set-output name=packageJson::${content//'%'/'%25'}"
-      - name: Print Package Json
-        run: |
-          echo "${{fromJson(steps.set_var.outputs.packageJson).version}}"
   job3:
     runs-on: ubuntu-latest
     outputs:
@@ -85,3 +82,17 @@ jobs:
       - name: Print package Json content
         run: |
           echo "${{fromJson(steps.set_var.outputs.matrix)}}"
+      - name: Terminate
+      - run: echo ...
+  ReadFile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: fetch the package json value
+          run: |
+            githubjson=`cat package.json`
+            echo $githubjson
+            number=`echo $(jq -r '.number' <<< "$githubjson")`
+            PRTitle=`echo $(jq -r '.pull_request.title' <<< "$githubjson")`
+            PRUrl=`echo $(jq -r '.pull_request.html_url' <<< "$githubjson")`
+            PRBody=`echo $(jq -r '.pull_request.body' <<< "$githubjson")`
