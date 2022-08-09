@@ -95,7 +95,6 @@ jobs:
           echo "${{fromJson(steps.set_var.outputs.matrix)}}"
       - name: Terminate
         run: echo ...
-
   job5:
     runs-on: ubuntu-latest
     outputs:
