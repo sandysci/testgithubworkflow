@@ -54,6 +54,7 @@ jobs:
   read_package_file:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
       - name: Generate Dynamic Environment Variable
         run: echo "NODE_VERSION=$(cat package.json)" >> $GITHUB_ENV
       - name: Print NODE_VERSION
