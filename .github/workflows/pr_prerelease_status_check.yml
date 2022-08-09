@@ -87,8 +87,8 @@ jobs:
   readFile:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
       - name: fetch the package json value
+        uses: actions/checkout@v2
         run: |
           githubjson=`cat package.json`
           echo $githubjson
