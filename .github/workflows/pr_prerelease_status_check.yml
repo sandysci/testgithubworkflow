@@ -45,7 +45,7 @@ jobs:
           echo $LITERAL
           echo $INTERPOLATION
           echo $EXPRESSION
-      - name: Print Step Environment Variables:
+      - name: Print Step Environment Variables
         env:
           STEPVAR: my step
         run: |
