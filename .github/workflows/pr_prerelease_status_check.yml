@@ -64,9 +64,9 @@ jobs:
   testJob:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Read Package.json File
       - id: set_var
+      - uses: actions/checkout@v2
+      - name: Read Package json File
         run: |
           content=`cat package.json`
           # the following lines are only required for multi line json
@@ -75,5 +75,6 @@ jobs:
           content="${content//$'\r'/'%0D'}"
           # end of optional handling for multi line json
           echo "::set-output name=packageJson::$content"
-      - run: |
+      - name: Print Package Json
+        run: |
           echo "${{fromJson(steps.set_var.outputs.packageJson).version}}"
