@@ -61,10 +61,9 @@ jobs:
         run: |
           echo ${{ env.NODE_VERSION }}
           echo $NODE_VERSION
-  testJob:
+  testPackagejson:
     runs-on: ubuntu-latest
     steps:
-      - id: set_var
       - uses: actions/checkout@v2
       - name: Read Package json File
         run: |
