@@ -1,0 +1,40 @@
+name: Prerelease Status Check
+
+on:
+  # See docs
+  # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#onpushpull_requestpull_request_targetpathspaths-ignore
+  # This will run the job on pull request that is opened or reopened
+  push:
+    branches:
+      - "GFN-970"
+  pull_request:
+    types: [opened, reopened]
+  # Allows one to manually run workflow from UI
+  workflow_dispatch:
+jobs:
+  prerelease_status_check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - run: git fetch --all --tags
+
+      - name: Check Release Version
+        uses: catan-settlement-engine
+        with:
+          file: catan-settlement-engine\package.json
+          tagFormat: -alpha
+        id: version_check_staging
+      - name:
+        run: echo "Version ${{steps.version_check.outputs.releaseVersion}}"
+      - id: set_var
+        run: |
+          content=`cat catan-settlement-engine/package.json`
+          # the following lines are only required for multi line json
+          content="${content//'%'/'%25'}"
+          content="${content//$'\n'/'%0A'}"
+          content="${content//$'\r'/'%0D'}"
+          # end of optional handling for multi line json
+          echo "::set-output name=packageJson::$content"
+      - run: |
+          echo "${{fromJson(steps.set_var.outputs.packageJson)}}"
