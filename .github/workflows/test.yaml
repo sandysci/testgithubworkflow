@@ -26,15 +26,12 @@ jobs:
     needs: testJob
     runs-on: ubuntu-latest
     outputs:
-      packageJson: ${{ steps.set_var.outputs.match }}
+      packageJson: ${{ steps.set_var.outputs.nomatch }}
     steps:
       - name: Print package Json content
         run: |
           echo "${{ fromJson(needs.testJob.outputs.packageJson).devDependencies.jest}}"
           echo "${{ fromJson(needs.testJob.outputs.packageJson).devDependencies['@fattmerchantorg/types-engine']}}"
-      - name: Check types value
-        if: ${{ contains(fromJson(needs.testJob.outputs.packageJson).devDependencies['@fattmerchantorg/types-engine'], '-') }}
-        run: echo "Found Here"
       - name: Check Prerelease
         id: check-prerelease
         run: |
@@ -42,13 +39,12 @@ jobs:
            contains(fromJson(needs.testJob.outputs.packageJson).devDependencies['@fattmerchantorg/types-finix'], '-')
            || contains(fromJson(needs.testJob.outputs.packageJson).devDependencies['@fattmerchantorg/types-omni'], '-')
            }}; then
+            echo "There is a prerelease found in this PR"
             exit 1
           else
-            echo ::set-output name=match::true
+            echo ::set-output name=nomatch::true
           fi
-      - name: Build
-        if: steps.check-prerelease.outputs.match == 'true'
+      - name: Finalize Prerelease Status Check
+        if: steps.check-prerelease.outputs.nomatch == 'true'
         run: |
-          echo "Tag is a match"
-      - name: Terminate Output
-        run: echo "Ending Now....."
+          echo "There is no prerelease in this PR"
