@@ -66,20 +66,6 @@ jobs:
         if: steps.check-prerelease.outputs.nomatch == 'true'
         run: |
           echo "There is no prerelease in this PR"
-      - name: Check Prerelease Status
-          id: check-prerelease
-          # Check if the values has '-' since the prerelease is in this format `2.1.4-GFN-123.1` and release is in this format `2.1.4`
-          # Exit if package.json contains a prerelease
-          run: |
-            if ${{ contains(fromJson(needs.testJob.outputs.packageJson).devDependencies['@fattmerchantorg/types-engine'], '-') ||
-             contains(fromJson(needs.testJob.outputs.packageJson).devDependencies['@fattmerchantorg/types-finix'], '-')
-             || contains(fromJson(needs.testJob.outputs.packageJson).devDependencies['@fattmerchantorg/types-omni'], '-')
-             }}; then
-              echo "There is a prerelease found in this PR"
-              exit 1
-            else
-              echo ::set-output name=nomatch::true
-            fi
       - name: Check Prerelease Loop
           id: check-prerelease-loop
           # Check if the values has '-' since the prerelease is in this format `2.1.4-GFN-123.1` and release is in this format `2.1.4`
