@@ -28,8 +28,6 @@ jobs:
     outputs:
       packageJson: ${{ steps.set_var.outputs.match }}
     steps:
-      - name: Dump Github Context
-        run: echo '${{ toJSON(github) }}'
       - name: Print package Json content
         run: |
           echo "${{ fromJson(needs.testJob.outputs.packageJson).devDependencies.jest}}"
@@ -40,8 +38,13 @@ jobs:
       - name: Check Prerelease
         id: check-prerelease
         run: |
-          if ${{ contains(fromJson(needs.testJob.outputs.packageJson).devDependencies['@fattmerchantorg/types-engine'], '-') }}; then
-              echo ::set-output name=match::true
+          if ${{ contains(fromJson(needs.testJob.outputs.packageJson).devDependencies['@fattmerchantorg/types-engine'], '-') ||
+           contains(fromJson(needs.testJob.outputs.packageJson).devDependencies['@fattmerchantorg/types-finix'], '-')
+           || contains(fromJson(needs.testJob.outputs.packageJson).devDependencies['@fattmerchantorg/types-omni'], '-')
+           }}; then
+            exit 1
+          else
+            echo ::set-output name=match::true
           fi
       - name: Build
         if: steps.check-prerelease.outputs.match == 'true'
