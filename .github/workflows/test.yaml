@@ -33,7 +33,7 @@ jobs:
           DEPENDENCY_CONTEXT: ${{ toJson(fromJson(needs.testJob.outputs.packageJson).devDependencies) }}
         run: |
           echo "$DEPENDENCY_CONTEXT"
-          echo "${{ fromJson(DEPENDENCY_CONTEXT)}}"
+          echo "${{ fromJson(env.DEPENDENCY_CONTEXT)}}"
 
       - name: Terminate Output
         run: echo "Ending Now....."
