@@ -34,7 +34,8 @@ jobs:
         run: |
           echo "$DEPENDENCY_CONTEXT"
           echo "${{ fromJson(env.DEPENDENCY_CONTEXT).jest}}"
-          echo "${{ fromJson(env.DEPENDENCY_CONTEXT).@fattmerchantorg/types-engine}}"
+          echo "${{ fromJson(needs.testJob.outputs.packageJson).devDependencies.jest}}"
+          echo "${{ fromJson(env.DEPENDENCY_CONTEXT)["@fattmerchantorg/types-engine"]}}"
 
       - name: Terminate Output
         run: echo "Ending Now....."
