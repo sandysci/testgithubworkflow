@@ -67,12 +67,12 @@ jobs:
         run: |
           echo "There is no prerelease in this PR"
       - name: Check Prerelease Loop
-          id: check-prerelease-loop
-          # Check if the values has '-' since the prerelease is in this format `2.1.4-GFN-123.1` and release is in this format `2.1.4`
-          # Exit if package.json contains a prerelease
-          run: |
-            for i in "${{fromJson(needs.testJob.outputs.packageJson).devDependencies}}"; do
-               echo "Value: ${i}"
-               echo "Value: ${i%.*}"
-            done
+        id: check-prerelease-loop
+        # Check if the values has '-' since the prerelease is in this format `2.1.4-GFN-123.1` and release is in this format `2.1.4`
+        # Exit if package.json contains a prerelease
+        run: |
+          for i in "${{fromJson(needs.testJob.outputs.packageJson).devDependencies}}"; do
+             echo "Value: ${i}"
+             echo "Value: ${i%.*}"
+          done
 
