@@ -25,9 +25,13 @@ jobs:
   testJob2:
     needs: testJob
     runs-on: ubuntu-latest
+    outputs:
+      packageJsonDep: ${{ steps.set_var.outputs.packageJsonDEP }}
     steps:
       - name: Print package Json content
-        run: |
-          echo "${{toJson(fromJson(needs.testJob.outputs.packageJson).devDependencies)}}"
+        env:
+          DEPENDENCY_CONTEXT: ${{ toJson(fromJson(needs.testJob.outputs.packageJson).devDependencies) }}
+        run: echo "$DEPENDENCY_CONTEXT"
+
       - name: Terminate Output
         run: echo "Ending Now....."
