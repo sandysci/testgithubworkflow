@@ -25,17 +25,13 @@ jobs:
   testJob2:
     needs: testJob
     runs-on: ubuntu-latest
-    outputs:
-      packageJsonDep: ${{ steps.set_var.outputs.packageJsonDEP }}
     steps:
+      - name: Dump Github Context
+        run: echo '${{ toJSON(github) }}'
       - name: Print package Json content
-        env:
-          DEPENDENCY_CONTEXT: ${{ toJson(fromJson(needs.testJob.outputs.packageJson).devDependencies) }}
         run: |
-          echo "$DEPENDENCY_CONTEXT"
-          echo "${{ fromJson(env.DEPENDENCY_CONTEXT).jest}}"
           echo "${{ fromJson(needs.testJob.outputs.packageJson).devDependencies.jest}}"
-          echo "${{ fromJson(env.DEPENDENCY_CONTEXT)['@fattmerchantorg/types-engine']}}"
+          echo "${{ fromJson(needs.testJob.outputs.packageJson).devDependencies['@fattmerchantorg/types-engine']}}"
 
       - name: Terminate Output
         run: echo "Ending Now....."
