@@ -69,8 +69,10 @@ jobs:
         # Check if the values has '-' since the prerelease is in this format `2.1.4-GFN-123.1` and release is in this format `2.1.4`
         # Exit if package.json contains a prerelease
         run: |
-          for i in "${{fromJson(needs.jobPackages.outputs.packageJson).devDependencies}}"; do
+          dep="${{fromJson(needs.jobPackages.outputs.packageJson).devDependencies}}"
+          for i in "$dep"; do
              echo "Value: ${i}"
              echo "Value: ${i%.*}"
+             echo "Value: ${{dep[i]}}"
           done
 
