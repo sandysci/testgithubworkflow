@@ -1,16 +1,26 @@
-name: Test linux job
-on:
-  push
+name: Prerelease Status Check
 
+on:
+  # See docs
+  # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#onpushpull_requestpull_request_targetpathspaths-ignore
+  # This will run the job on pull request that is opened or reopened
+  push:
+  pull_request:
+    types: [opened, reopened]
+  # Allows one to manually run workflow from UI
+  workflow_dispatch:
 jobs:
-  testJob:
-    name: Test
+  jobPackages:
+    name: Get Pakage.JSON File Content
     runs-on: ubuntu-latest
+    # The File content will be stored in the packageJson variable
     outputs:
       packageJson: ${{ steps.set_var.outputs.packageJson }}
     steps:
+      # This will enable us read the repository content
       - uses: actions/checkout@v2
       - id: set_var
+        # Open the package.json file and strip special characters in the content
         run: |
           content=`cat package.json`
           # the following lines are only required for multi line json
@@ -19,21 +29,28 @@ jobs:
           content="${content//$'\r'/'%0D'}"
           # end of optional handling for multi line json
           echo "::set-output name=packageJson::$content"
+      # print package Json content key values within the job
       - run: |
           echo "${{fromJson(steps.set_var.outputs.packageJson).version}}"
           echo "${{fromJson(steps.set_var.outputs.packageJson).devDependencies}}"
-  testJob2:
-    needs: testJob
+  jobPackageMatch:
+    # uses the Job packages job to retrieve the file output content
+    needs: jobPackages
     runs-on: ubuntu-latest
+    # Create an output variable to store the match check
     outputs:
       packageJson: ${{ steps.set_var.outputs.nomatch }}
     steps:
+      # print package Json content key values gotten from the job JobPackage
       - name: Print package Json content
         run: |
           echo "${{ fromJson(needs.testJob.outputs.packageJson).devDependencies.jest}}"
+          echo "${{ fromJson(needs.testJob.outputs.packageJson).devDependencies.jest}}"
           echo "${{ fromJson(needs.testJob.outputs.packageJson).devDependencies['@fattmerchantorg/types-engine']}}"
-      - name: Check Prerelease
+      - name: Check Prerelease Status
         id: check-prerelease
+        # Check if the values has '-' since the prerelease is in this format `2.1.4-GFN-123.1` and release is in this format `2.1.4`
+        # Exit if package.json contains a prerelease
         run: |
           if ${{ contains(fromJson(needs.testJob.outputs.packageJson).devDependencies['@fattmerchantorg/types-engine'], '-') ||
            contains(fromJson(needs.testJob.outputs.packageJson).devDependencies['@fattmerchantorg/types-finix'], '-')
@@ -44,7 +61,32 @@ jobs:
           else
             echo ::set-output name=nomatch::true
           fi
+        # Finalize Check if prerelease match is found
       - name: Finalize Prerelease Status Check
         if: steps.check-prerelease.outputs.nomatch == 'true'
         run: |
           echo "There is no prerelease in this PR"
+      - name: Check Prerelease Status
+          id: check-prerelease
+          # Check if the values has '-' since the prerelease is in this format `2.1.4-GFN-123.1` and release is in this format `2.1.4`
+          # Exit if package.json contains a prerelease
+          run: |
+            if ${{ contains(fromJson(needs.testJob.outputs.packageJson).devDependencies['@fattmerchantorg/types-engine'], '-') ||
+             contains(fromJson(needs.testJob.outputs.packageJson).devDependencies['@fattmerchantorg/types-finix'], '-')
+             || contains(fromJson(needs.testJob.outputs.packageJson).devDependencies['@fattmerchantorg/types-omni'], '-')
+             }}; then
+              echo "There is a prerelease found in this PR"
+              exit 1
+            else
+              echo ::set-output name=nomatch::true
+            fi
+      - name: Check Prerelease Loop
+          id: check-prerelease-loop
+          # Check if the values has '-' since the prerelease is in this format `2.1.4-GFN-123.1` and release is in this format `2.1.4`
+          # Exit if package.json contains a prerelease
+          run: |
+            for i in "${{fromJson(needs.testJob.outputs.packageJson).devDependencies}}"; do
+               echo "Value: ${i}"
+               echo "Value: ${i%.*}"
+            done
+
