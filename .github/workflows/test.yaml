@@ -28,6 +28,6 @@ jobs:
     steps:
       - name: Print package Json content
         run: |
-          echo "${{fromJson(needs.testJob.outputs.packageJson)}}"
+          echo "${{fromJson(needs.testJob.outputs.packageJson).version}}"
       - name: Terminate Output
         run: echo "Ending Now....."

@@ -92,7 +92,7 @@ jobs:
     steps:
       - name: Print package Json content
         run: |
-          echo "${{fromJson(needs.job3.outputs.output1).version}}"
+          echo "${{fromJson(needs.job3.outputs.output1.version)}}"
       - name: Terminate
         run: echo "Ending....."
 
