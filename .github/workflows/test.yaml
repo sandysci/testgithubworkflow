@@ -70,8 +70,7 @@ jobs:
         # Exit if package.json contains a prerelease
         run: |
           for i in "${fromJson(needs.jobPackages.outputs.packageJson).devDependencies}"; do
-             echo "Value: ${{i}}"
-             echo "Value: ${i%.*}"
-             echo "Value: ${fromJson(needs.jobPackages.outputs.packageJson).devDependencies[i]}"
+            echo "Value: ${i}"
+            echo "Value: ${i%.*}"
           done
 
