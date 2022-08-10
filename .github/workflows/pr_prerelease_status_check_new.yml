@@ -87,7 +87,7 @@ jobs:
       - name: Dump Github Context
         run: echo '${{ toJSON(github) }}'
       - name: Dump Matrix
-          run: echo '${{fromJson(steps.step1.outputs.output1)}}'
+        run: echo '${{fromJson(steps.step1.outputs.output1)}}'
   job4:
     needs: job3
     runs-on: ubuntu-latest
