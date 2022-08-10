@@ -86,13 +86,15 @@ jobs:
           echo "::set-output name=matrix::${JSON//'%'/'%25'}"
       - name: Dump Github Context
         run: echo '${{ toJSON(github) }}'
+      - name: Dump Matrix
+          run: echo '${{fromJson(steps.step1.outputs.output1)}}'
   job4:
     needs: job3
     runs-on: ubuntu-latest
     steps:
       - name: Print package Json content
         run: |
-          echo "${{fromJson(needs.job3.outputs.output1).version}}"
+          echo "${{fromJson(needs.job3.outputs.output1)}}"
       - name: Terminate
         run: echo "Ending....."
 

@@ -21,6 +21,7 @@ jobs:
           echo "::set-output name=packageJson::$content"
       - run: |
           echo "${{fromJson(steps.set_var.outputs.packageJson).version}}"
+          echo "${{fromJson(steps.set_var.outputs.packageJson).devDependencies}}"
   testJob2:
     needs: testJob
     runs-on: ubuntu-latest
@@ -28,6 +29,5 @@ jobs:
       - name: Print package Json content
         run: |
           echo "${{fromJson(needs.testJob.outputs.packageJson)}}"
-          echo "${{fromJson(needs.testJob.outputs.packageJson).devDependencies.@fattmerchantorg/types-engine}}"
       - name: Terminate Output
         run: echo "Ending Now....."
