@@ -28,6 +28,6 @@ jobs:
     steps:
       - name: Print package Json content
         run: |
-          echo "${{fromJson(needs.testJob.outputs.packageJson)["devDependencies"]}}"
+          echo "${{toJson(fromJson(needs.testJob.outputs.packageJson).devDependencies)}}"
       - name: Terminate Output
         run: echo "Ending Now....."
