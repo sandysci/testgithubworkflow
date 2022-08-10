@@ -32,6 +32,17 @@ jobs:
         run: |
           echo "${{ fromJson(needs.testJob.outputs.packageJson).devDependencies.jest}}"
           echo "${{ fromJson(needs.testJob.outputs.packageJson).devDependencies['@fattmerchantorg/types-engine']}}"
-
+      - name: Check types value
+        if: ${{ fromJson(needs.testJob.outputs.packageJson).devDependencies['@fattmerchantorg/types-engine'] == 'Hello' }}
+        run: echo "greeting is Hello"
+      - name: Success
+        if: ${{ success() }}
+        run: echo "Still running..."
+      - name: Always
+        if: ${{ always() }}
+        run: echo "You will always see this"
+      - name: Failure
+        if: ${{ failure() }}
+        run: echo "Something went wrong..."
       - name: Terminate Output
         run: echo "Ending Now....."
