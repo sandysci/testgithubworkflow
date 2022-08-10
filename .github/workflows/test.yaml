@@ -25,6 +25,8 @@ jobs:
   testJob2:
     needs: testJob
     runs-on: ubuntu-latest
+    outputs:
+      packageJson: ${{ steps.set_var.outputs.match }}
     steps:
       - name: Dump Github Context
         run: echo '${{ toJSON(github) }}'
@@ -33,16 +35,17 @@ jobs:
           echo "${{ fromJson(needs.testJob.outputs.packageJson).devDependencies.jest}}"
           echo "${{ fromJson(needs.testJob.outputs.packageJson).devDependencies['@fattmerchantorg/types-engine']}}"
       - name: Check types value
-        if: ${{ fromJson(needs.testJob.outputs.packageJson).devDependencies['@fattmerchantorg/types-engine'] == '^1.1.53' }}
+        if: ${{ contains(fromJson(needs.testJob.outputs.packageJson).devDependencies['@fattmerchantorg/types-engine'], '-') }}
         run: echo "Found Here"
-      - name: Success
-        if: ${{ success() }}
-        run: echo "Still running..."
-      - name: Always
-        if: ${{ always() }}
-        run: echo "You will always see this"
-      - name: Failure
-        if: ${{ failure() }}
-        run: echo "Something went wrong..."
+      - name: Check Prerelease
+        id: check-prerelease
+        run: |
+          if ${{ contains(fromJson(needs.testJob.outputs.packageJson).devDependencies['@fattmerchantorg/types-engine'], '-') }}; then
+              echo ::set-output name=match::true
+          fi
+      - name: Build
+        if: steps.check-prerelease.outputs.match == 'true'
+        run: |
+          echo "Tag is a match"
       - name: Terminate Output
         run: echo "Ending Now....."
