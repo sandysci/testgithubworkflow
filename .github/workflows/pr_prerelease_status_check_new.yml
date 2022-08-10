@@ -77,10 +77,10 @@ jobs:
   job3:
     runs-on: ubuntu-latest
     outputs:
-      matrix: ${{ steps.set-matrix.outputs.matrix }}
+      output1: ${{ steps.step1.outputs.matrix }}
     steps:
       - uses: actions/checkout@v2
-      - id: set-matrix
+      - id: step1
         run: |
           JSON=$(cat package.json)
           echo "::set-output name=matrix::${JSON//'%'/'%25'}"
@@ -89,12 +89,10 @@ jobs:
   job4:
     needs: job3
     runs-on: ubuntu-latest
-    strategy:
-      matrix: ${{fromJson(needs.job3.outputs.matrix)}}
     steps:
       - name: Print package Json content
         run: |
-          echo "${{fromJson(steps.set_var.outputs.matrix).version}}"
+          echo "${{fromJson(needs.job3.outputs.output1).version}}"
       - name: Terminate
         run: echo "Ending....."
 

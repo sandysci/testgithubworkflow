@@ -6,6 +6,8 @@ jobs:
   testJob:
     name: Test
     runs-on: ubuntu-latest
+    outputs:
+      packageJson: ${{ steps.set_var.outputs.packageJson }}
     steps:
       - uses: actions/checkout@v2
       - id: set_var
@@ -22,12 +24,10 @@ jobs:
   testJob2:
     needs: testJob
     runs-on: ubuntu-latest
-    strategy:
-      matrix: ${{fromJson(needs.job3.outputs.packageJson)}}
     steps:
       - name: Print package Json content
         run: |
-          echo "${{fromJson(steps.set_var.outputs.packageJson).version}}"
-          echo "${{fromJson(steps.set_var.outputs.packageJson).devDependencies}}"
+          echo "${{fromJson(needs.testJob.outputs.packageJson)}}"
+          echo "${{fromJson(needs.testJob.outputs.packageJson).devDependencies.@fattmerchantorg/types-engine}}"
       - name: Terminate Output
         run: echo "Ending Now....."
