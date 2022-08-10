@@ -30,7 +30,7 @@ jobs:
     steps:
       - name: Print package Json content
         env:
-          DEPENDENCY_CONTEXT: ${{ fromJson(needs.testJob.outputs.packageJson).devDependencies }}
+          DEPENDENCY_CONTEXT: ${{ toJson(fromJson(needs.testJob.outputs.packageJson).devDependencies) }}
         run: echo "$DEPENDENCY_CONTEXT"
 
       - name: Terminate Output
