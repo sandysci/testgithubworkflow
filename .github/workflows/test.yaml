@@ -19,4 +19,15 @@ jobs:
           echo "::set-output name=packageJson::$content"
       - run: |
           echo "${{fromJson(steps.set_var.outputs.packageJson).version}}"
+  testJob2:
+    needs: testJob
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: ${{fromJson(needs.job3.outputs.packageJson)}}
+    steps:
+      - name: Print package Json content
+        run: |
+          echo "${{fromJson(steps.set_var.outputs.packageJson).version}}"
           echo "${{fromJson(steps.set_var.outputs.packageJson).devDependencies}}"
+      - name: Terminate Output
+        run: echo "Ending Now....."
