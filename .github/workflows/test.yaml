@@ -28,6 +28,6 @@ jobs:
     steps:
       - name: Print package Json content
         run: |
-          echo "${{fromJson(fromJson(needs.testJob.outputs.packageJson).devDependencies).@fattmerchantorg/types-engine}}"
+          echo "${{fromJson(needs.testJob.outputs.packageJson)["devDependencies"]}}"
       - name: Terminate Output
         run: echo "Ending Now....."
